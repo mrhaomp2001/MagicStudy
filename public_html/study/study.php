@@ -6,24 +6,24 @@ require_once '../../src/TaiKhoanNguoiDung.php';
 if ($_SESSION['isLogin'] == 1) {
   $nguoiDung = new MagicClass\TaiKhoanNguoiDung($pdo);
   $nguoiDung = $nguoiDung->FindTaiKhoanNguoiDungByUsername($_SESSION['username']);
+} else {
+  Redirection('../home');
 }
 
 if ($nguoiDung->cauHoiHienTai == 0) {
-  $query = 'CALL ChangeCauHoiByUsername(?)';
-  try {
-    $sth = $pdo->prepare($query);
-
-    $sth->execute(
-      [
-        $_SESSION['username']
-      ]
-    );
-
-    $nguoiDung = $nguoiDung->FindTaiKhoanNguoiDungByUsername($_SESSION['username']);
-  } catch (PDOException $e) {
-    $pdo_error = $e->getMessage();
-  }
+  Redirection('../study');
 }
+
+if ($_SESSION["isStudy"] != "1") {
+  Redirection('../study');
+}
+$_SESSION["isStudy"] = "0";
+
+if (isset($_GET['maCauTraLoi']) && isset($_GET['noiDungTraLoi'])) {
+  $maCauTraLoi = $_GET['maCauTraLoi'];
+  $noiDungTraLoi = $_GET['noiDungTraLoi'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +84,8 @@ https://templatemo.com/tm-579-cyborg-gaming
             <div class="row">
               <div class="col-lg-7">
                 <div class="header-text">
-                  <h4>Khu vực: <br> <em><?php echo $nguoiDung->tenLop; ?></em></h4>
+                  <h6>Chào mừng bạn</h6>
+                  <h4><em>Đến với </em> <br> Hội nghiên cứu <br>học thuật</h4>
                 </div>
               </div>
             </div>
@@ -95,15 +96,14 @@ https://templatemo.com/tm-579-cyborg-gaming
           <div class="most-popular">
             <div class="row">
               <div class="col-lg-12 text-light text-center mb-3">
-
                 <?php
-                $query = 'CALL GetCauHoiHienTaiByUsername(?)';
+                $query = 'CALL GETNOIDUNGSAUTRALOIBYMACAUTRALOI(?)';
                 try {
                   $sth = $pdo->prepare($query);
 
                   $sth->execute(
                     [
-                      $_SESSION['username']
+                      $maCauTraLoi
                     ]
                   );
                 } catch (PDOException $e) {
@@ -111,60 +111,57 @@ https://templatemo.com/tm-579-cyborg-gaming
                 }
 
                 while ($row = $sth->fetch()) {
-                  echo htmlspecialchars($row['noi_dung_cau_hoi']);
+                  echo htmlspecialchars($row['NOI_DUNG_SAU_TRA_LOI']);
                 }
                 ?>
+                <br>
+                <?php
+                $query = 'CALL SELECTCAUTRALOIBYUSERNAME(?,?)';
+                try {
+                  $sth = $pdo->prepare($query);
 
+                  $sth->execute(
+                    [
+                      $_SESSION["username"],
+                      $noiDungTraLoi
+                    ]
+                  );
+                } catch (PDOException $e) {
+                  $pdo_error = $e->getMessage();
+                }
+
+                if ($row = $sth->fetch()) {
+                  echo '<br>Tiền nhận được: ' . htmlspecialchars($row['TIEN_CAU_HOI']);
+                  echo '<br>Kinh nghiệm nhận được: ' . htmlspecialchars($row['KINH_NGHIEM_CAU_HOI']);
+                }
+
+                $query = 'CALL CHANGECAUHOIBYUSERNAME(?)';
+                try {
+                  $sth = $pdo->prepare($query);
+
+                  $sth->execute(
+                    [
+                      $_SESSION["username"]
+                    ]
+                  );
+                } catch (PDOException $e) {
+                  $pdo_error = $e->getMessage();
+                }
+
+                ?>
                 <div style="height: 20px; width: 50px; text-align:center"></div>
-                <div class="main-button row justify-content-center">
-
-                  <?php
-                  $query = 'CALL GetCauTraLoiByUsername(?)';
-                  try {
-                    $sth = $pdo->prepare($query);
-
-                    $sth->execute(
-                      [
-                        $_SESSION['username']
-                      ]
-                    );
-                  } catch (PDOException $e) {
-                    $pdo_error = $e->getMessage();
-                  }
-
-                  while ($row = $sth->fetch()) {
-                    echo '<a href="./study.php?maCauTraLoi=' . $row['ma_cau_tra_loi'] . '&noiDungTraLoi=' . $row['noi_dung_tra_loi'] . '" class="col-md-2 mx-3">' . htmlspecialchars($row['noi_dung_tra_loi']) . '</a> ';
-                    $_SESSION["isStudy"] = "1";
-                  }
-
-                  ?>
-                  <br>
-                  <!-- <a href="">1</a>
-                  <a href="">1</a>
-                  <a href="">1</a>
-                  <a href="">1</a> -->
+                <div class="main-button">
+                  <a href="../study/">Tiếp tục cuộc hành trình >> </a>
                 </div>
               </div>
             </div>
           </div>
-          <!-- ***** Most Popular End ***** -->
-
-          <div class="most-popular">
-            <div class="row">
-              <div class="col-lg-12 text-light text-left mb-3">
-                  Tên nhân vật: <?php echo $nguoiDung->tenNguoiDung; ?>
-                  <br>
-                  Kinh nghiệm: <?php echo $nguoiDung->kinhNghiem; ?>
-                  <br>
-                  Độ đói: <?php echo $nguoiDung->doDoi; ?>
-                  <br>
-                  Tiền: <?php echo $nguoiDung->tien; ?> $
-                </div>
-              </div>
-            </div>
         </div>
+        <!-- ***** Most Popular End ***** -->
+
       </div>
     </div>
+  </div>
   </div>
 
   <footer>

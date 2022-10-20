@@ -26,7 +26,7 @@ class TaiKhoanNguoiDung
 
     public function FindTaiKhoanNguoiDungByUsername($usernameT)
     {
-        $stmt = $this->db->prepare('CALL FindTaiKhoanNguoiDungByUsername(?)');
+        $stmt = $this->db->prepare('CALL FINDTAIKHOANNGUOIDUNGBYUSERNAME(?)');
         $stmt->execute(
             [
                 $usernameT
@@ -34,18 +34,18 @@ class TaiKhoanNguoiDung
         );
 
         if ($row = $stmt->fetch()) {
-            $this->username = $row['username'];
-            $this->password = $row['password'];
-            $this->maLop = $row['ma_lop'];
-            $this->tenLop = htmlspecialchars($row['ten_lop']);
-            $this->maNguoiDung = $row['ma_nguoi_dung'];
-            $this->tenNguoiDung = htmlspecialchars($row['ten_nguoi_dung']);
-            $this->doDoi = $row['do_doi'];
-            $this->tien = $row['tien'];
-            $this->kinhNghiem = $row['kinh_nghiem'];
-            $this->maLoaiTaiKhoan = $row['ma_loai_tai_khoan'];
-            $this->tenLoaiTaiKhoan = htmlspecialchars($row['ten_loai_tai_khoan']);
-            $this->cauHoiHienTai = $row['cau_hoi_hien_tai'];
+            $this->username = $row['USERNAME'];
+            $this->password = $row['PASSWORD'];
+            $this->maLop = $row['MA_LOP'];
+            $this->tenLop = htmlspecialchars($row['TEN_LOP']);
+            $this->maNguoiDung = $row['MA_NGUOI_DUNG'];
+            $this->tenNguoiDung = htmlspecialchars($row['TEN_NGUOI_DUNG']);
+            $this->doDoi = $row['DO_DOI'];
+            $this->tien = $row['TIEN'];
+            $this->kinhNghiem = $row['KINH_NGHIEM'];
+            $this->maLoaiTaiKhoan = $row['MA_LOAI_TAI_KHOAN'];
+            $this->tenLoaiTaiKhoan = htmlspecialchars($row['TEN_LOAI_TAI_KHOAN']);
+            $this->cauHoiHienTai = $row['CAU_HOI_HIEN_TAI'];
         }
         return $this;
     }

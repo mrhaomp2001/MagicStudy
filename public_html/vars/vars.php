@@ -61,7 +61,7 @@ function CheckUserSession()
         exit();
     }
 
-    $query = "CALL Get_User_Session_ID(?)";
+    $query = "CALL GET_USER_SESSION_ID(?)";
 
     if ($_SESSION['isLogin'] == 1) {
         $sth = $pdo->prepare($query);

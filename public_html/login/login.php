@@ -5,7 +5,7 @@ include '../../partials/db_connect.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($_POST['username']) && !empty($_POST['password'])) {
 
-        $query = 'CALL Login(?, ?)';
+        $query = 'CALL LOGIN(?, ?)';
 
         try {
             $sth = $pdo->prepare($query);
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION["user_session_id"] = session_id();
 
-            $query = "call Set_User_Session_ID(?, ?)";
+            $query = "call SET_USER_SESSION_ID(?, ?)";
 
             try {
                 $sth = $pdo->prepare($query);
